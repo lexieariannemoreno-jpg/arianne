@@ -3,25 +3,16 @@ const menu = document.getElementById("menu");
 document.querySelector(".menu-btn").addEventListener("click", () => menu.classList.toggle("open"));
 menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => menu.classList.remove("open")));
 
-// 2. Profile photo: look in images/profile.png first, then in the main folder.
+// 2. Profile photo: if images/profile.jpg exists, show it. If not, the "LM" initials stay visible.
 const avatar = document.querySelector(".avatar");
 const photo = avatar.querySelector("img");
-const paths = ["images/profile.png", "profile.png"];
-let n = 0;
-
-function showPhoto() {
-  photo.style.display = "";
-  avatar.classList.add("has-photo");   // hides the "LM" initials
+function checkPhoto() {
+  if (photo.complete && photo.naturalWidth > 0) avatar.classList.add("has-photo");
+  else photo.style.display = "none";
 }
-function tryNext() {
-  n++;
-  if (n < paths.length) photo.src = paths[n];
-  else photo.style.display = "none";   // photo not found, keep "LM"
-}
-
-photo.addEventListener("load", showPhoto);
-photo.addEventListener("error", tryNext);
-if (photo.complete) { photo.naturalWidth > 0 ? showPhoto() : tryNext(); }
+photo.addEventListener("load", checkPhoto);
+photo.addEventListener("error", checkPhoto);
+if (photo.complete) checkPhoto();
 
 // 3. Fade-in: sections appear softly when you scroll to them
 const observer = new IntersectionObserver(entries => {
